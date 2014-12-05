@@ -1,0 +1,24 @@
+{
+  "name": "inject",
+  "version": "0.0.1",
+  "description": "Inject class features for Juno.",
+  "main": "inject.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "tbd"
+  },
+  "keywords": [
+    "inject",
+    "class",
+    "inheritence"
+  ],
+  "author": "Jordan gensler <jordangens@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "chic": "^1.1.0",
+    "es6-promise": "^2.0.0"
+  }
+}
