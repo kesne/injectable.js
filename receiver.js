@@ -19,7 +19,7 @@ var Receiver = Class.extend({
         chain = this._buildChain(key, this._injected.defaultCallChain, provided);
       }
       //Run chain we've built:
-      this._runChain(arguments, chain);
+      return this._runChain(arguments, chain);
     }
   },
   //Turns mixed arrays of aliases and functions into a purely functional array:
@@ -47,28 +47,38 @@ var Receiver = Class.extend({
     //Allow for promise resolution:
     if(nArgs && nArgs.then && typeof nArgs.then === 'function'){
       var self = this;
-      nArgs.then(function(nArgs){
+      return nArgs.then(function(nArgs){
         if(typeof nArgs === 'undefined') nArgs = args;
         if(i < chain.length - 1) self._runChain(nArgs, chain, i+1);
       }, function(){
-        //Handle Error?
+        // Don't call next chain method.
+        //TODO: Handle Error?
       });
     }else{
-      if(typeof nArgs === 'undefined') nArgs = args;
       //Go to the next link:
-      if(i < chain.length - 1) this._runChain(nArgs, chain, i+1);
+      if(i < chain.length - 1){
+        if(typeof nArgs === 'undefined') nArgs = args;
+        return this._runChain(nArgs, chain, i+1)
+      }else{
+        return nArgs;
+      };
     }
   }
 });
 
 var injectProto = function(R, fnName, provided){
-  R.prototype[fnName] = function(){
-    return this._exec(fnName, provided).apply(this, arguments);
-  };
+  if(!R.prototype[fnName]){
+    R.prototype[fnName] = function(){
+      return this._exec(fnName, provided).apply(this, arguments);
+    };
+  }
 };
 
 //Alias chic:
 Receiver._extend = Receiver.extend;
+
+//Don't inject these functions:
+var noInject = ['create', 'constructor', 'init'];
 
 //Note: We're not using native extension from chic because that wouldn't work with our ordered exec.
 Receiver.extend = function(proto){
@@ -90,15 +100,23 @@ Receiver.extend = function(proto){
     alias: {}
   };
 
-  //Set up the aliases as key/value in the _injexted object:
-  for(var i = 0; i < injectors.length; i++){
-    RProto._injected.alias[injectors[i]._alias] = injectors[i];
-  };
-
-  //The prototype we'll generate from theirs:
+  //Generate a prototype that allows for feature injection:
   for(var fnName in proto){
     if(proto.hasOwnProperty(fnName)){
       injectProto(R, fnName, proto[fnName]);
+    }
+  }
+
+  //Set up the aliases as key/value in the _injexted object:
+  for(var i = 0; i < injectors.length; i++){
+    RProto._injected.alias[injectors[i]._alias] = injectors[i];
+
+    //Inject the functionality from the injectors:
+    for(var injectFnName in injectors[i]){
+      if(typeof injectors[i][injectFnName] === 'function' && noInject.indexOf(injectFnName) === -1){
+        //Inject the function but don't give a provided end of the chain:
+        injectProto(R, injectFnName);
+      }
     }
   }
 

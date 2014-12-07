@@ -1,6 +1,6 @@
 # Injectable.js
 
-Injectable.js is a lightweight library for feature injection with automatic super calls. It is meant as an alternative to multi-level class inheritence in JavaScript.
+Injectable.js is a lightweight library for feature injection with automatic calls through the injected function chain. It is meant as an alternative to multi-level class inheritence in JavaScript.
 
 Feature Injection embraces the idea of small, composable functions called _injectors_. These _injectors_ receive data from the method invocation, perform operations, and optionally return new data to the next function. Injectable.js automatically calls through all of the injected functions with the same name in the order that they were injected. The _injectors_ are injected into _receivers_.
 
@@ -53,4 +53,4 @@ It's possible for any step in the execution to happen asyncronously. To do this,
 
 If a promise rejects, the execution will stop and the next functions in the chain will not execute.
 
-The main Injectable.js file does _not_ export a promise library, but **es6-promise** is available to include with `var Promise = require('injectablejs/promise');`.
+Any promise library may be used, so long as it provides a standard `.then(success, failure)` method. The main Injectable.js file does _not_ export a promise library, but **es6-promise** is available to include with `var Promise = require('injectablejs/promise');`.

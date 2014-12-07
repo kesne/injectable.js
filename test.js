@@ -30,8 +30,13 @@ var InjectMe = Injector.extend({
       setTimeout(function(){
         console.log('resolving promise');
         resolve(['promise', 'resolved', 'with', 'these', 'arguments']);
-      }, 1000);
+      }, 500);
     });
+  },
+
+  onlyInjected: function(){
+    console.log('this function was only injected');
+    return 'Why yes, it does.';
   }
 });
 
@@ -73,7 +78,7 @@ var MyReceiver = Receiver.extend({
   },
 
   promise: function(){
-    console.log('called after the first!');
+    console.log('called after the first promise resolved!');
   }
 });
 
@@ -89,7 +94,11 @@ instance.noParent();
 console.log('\n\n');
 instance.dataPass('one', 'two', 'three');
 console.log('\n\n');
-instance.promise('');
+instance.promise().then(function(){
+  console.log('if there was a promise in the first step we returned it.');
+});
+console.log('\n\n');
+console.log('Returns the value from the last step:', instance.onlyInjected());
 
 
 
