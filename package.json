@@ -1,8 +1,8 @@
 {
-  "name": "inject",
-  "version": "0.0.1",
-  "description": "Inject class features for Juno.",
-  "main": "inject.js",
+  "name": "injectable",
+  "version": "0.0.3",
+  "description": "A lightweight library for function injection with automatic super calls and composible functionality.",
+  "main": "injectable.js",
   "scripts": {
     "test": "gulp test"
   },
@@ -11,6 +11,7 @@
     "url": "tbd"
   },
   "keywords": [
+    "injectable",
     "inject",
     "class",
     "inheritence"

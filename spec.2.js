@@ -1,0 +1,1 @@
+//This is the version 2.0 spec of Inject. It utilizes one composible class instead of an injector class and receiver class.

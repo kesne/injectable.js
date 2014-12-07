@@ -2,16 +2,24 @@ var Class = require('chic').Class;
 var Injector = require('./injector');
 
 var Receiver = Class.extend({
+  init: function(){
+    //Call the create constructor:
+    if(this.create) this.create.apply(this, args);
+  },
   //Sets up the call to the run chain:
   _exec: function(key, provided){
     return function(){
       //We were provide a specific call chain, so use that instead of the default:
+      var chain;
       if(typeof provided === 'object'){
-        this._runChain(arguments, this._buildChain(key, provided));
+        //Build a custom chain:
+        chain = this._buildChain(key, provided);
       }else{
         //Use the default call chain:
-        this._runChain(arguments, this._buildChain(key, this._injected.defaultCallChain, provided));
+        chain = this._buildChain(key, this._injected.defaultCallChain, provided);
       }
+      //Run chain we've built:
+      this._runChain(arguments, chain);
     }
   },
   //Turns mixed arrays of aliases and functions into a purely functional array:
